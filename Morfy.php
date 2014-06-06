@@ -414,6 +414,8 @@ class Morfy {
             $_pages[$key]['slug'] = basename($page, '.md');
         }
 
+        $_pages = $this->subvalSort($_pages, $order_by, $order_type);
+
         return $_pages;
     }
 
