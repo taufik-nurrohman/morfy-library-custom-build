@@ -379,6 +379,8 @@ class Morfy {
 
         $pages = $this->getFiles($url, 'md', $ignore);
 
+        if( ! $pages) $pages = array();
+
         if( ! is_null($limit)) $pages = array_slice($pages, null, $limit);
 
         $_pages = array();
