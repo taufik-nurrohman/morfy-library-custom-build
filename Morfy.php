@@ -176,6 +176,7 @@ class Morfy {
         }
 
         // Start the session
+        // session_save_path('/home/latitudu/.cagefs/tmp');
         !session_id() and @session_start();        
 
         // Load Plugins
@@ -443,7 +444,7 @@ class Morfy {
         $page_headers = $this->page_headers;
 
         // Get the file path
-        if($url) {
+        if($url !== "") {
             $file = CONTENT_PATH . '/' . $url;
         } else {
             $file = CONTENT_PATH . '/' . 'index';
@@ -509,7 +510,8 @@ class Morfy {
      * ------------------------------------------
      *
      *  <code>
-     *      $files = Morfy::factory()->getFiles('folder');
+     *      $files = Morfy::factory()->
+     ('folder');
      *      $files = Morfy::factory()->getFiles('folder', 'txt');
      *      $files = Morfy::factory()->getFiles('folder', array('txt', 'log'));
      *  </code>
@@ -523,24 +525,21 @@ class Morfy {
     public static function getFiles($folder, $type = null, $ignore = array('404')) {
         $data = array();
         $folder = rtrim($folder, '\\/');
+        if( ! is_array($type)) {
+            $type = array($type);
+        }
         if(is_dir($folder)) {
             $iterator = new RecursiveDirectoryIterator($folder, FilesystemIterator::SKIP_DOTS);
             foreach(new RecursiveIteratorIterator($iterator) as $file) {
+                $file_ext = strtolower(pathinfo($file->getFilename(), PATHINFO_EXTENSION));
                 if( ! is_null($type)) {
-                    if(is_array($type)) {
-                        $file_ext = strtolower(pathinfo($file->getFilename(), PATHINFO_EXTENSION));
-                        if(in_array($file_ext, $type) && ! in_array(basename($file->getFilename(), '.' . $file_ext), $ignore)) {
-                            if(strpos($file->getFilename(), $file_ext, 1)) {
-                                $data[] = $file->getPathName();
-                            }
-                        }
-                    } else {
-                        if(strpos($file->getFilename(), $type, 1) && ! in_array(basename($file->getFilename(), '.' . $type), $ignore)) {
-                            $data[] = $file->getPathName();
-                        }
+                    if(in_array($file_ext, $type) && ! in_array(basename($file->getFilename(), '.' . $file_ext), $ignore)) {
+                        $data[] = $file->getPathName();
                     }
                 } else {
-                    $data[] = $file->getPathName();
+                    if( ! in_array(basename($file->getFilename(), '.' . $file_ext), $ignore)) {
+                        $data[] = $file->getPathName();
+                    }
                 }
             }
             return $data;
