@@ -438,7 +438,7 @@ class Morfy {
 
         $url = str_replace(CONTENT_PATH, "", $url);
         $url = trim($url, '\\/');
-        $url = rtrim($url, '.md');
+        $url = preg_replace('#\.md$#', "", $url);
 
         // Page headers
         $page_headers = $this->page_headers;
